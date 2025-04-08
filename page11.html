@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Học Từ Vựng - Trang 11</title>
+  <style>
+    /* Nền gradient xanh dương chuyển động, tươi sáng */
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    body {
+      background: linear-gradient(-45deg, #4facfe, #00f2fe, #4facfe, #00f2fe);
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+      position: relative;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: #fff;
+      text-align: center;
+    }
+    .page-number {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-weight: bold;
+    }
+    h1 {
+      margin-top: 60px;
+      font-size: 2em;
+    }
+    .congrats {
+      font-size: 1.5em;
+      margin-top: 20px;
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      h1 { font-size: 1.8em; }
+      .congrats { font-size: 1.2em; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-number">Trang 11</div>
+  <h1>Chúc mừng!</h1>
+  <div class="congrats" id="congrats-text"></div>
+
+  <script>
+    const playerName = localStorage.getItem("playerName") || "Người chơi";
+    document.getElementById("congrats-text").textContent = "Chúc mừng bạn " + playerName + " đã hoàn thành!";
+  </script>
+</body>
+</html>

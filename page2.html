@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Trang 2 - Kiểm Tra Từ Vựng</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f8ff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .page-number {
+      position: fixed;
+      top: 10px;
+      right: 15px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #555;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .vocab-check {
+      border: 1px solid #ccc;
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .prompt {
+      font-style: italic;
+      color: #0077cc;
+      margin-bottom: 8px;
+    }
+
+    .vocab-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      width: 100%;
+    }
+
+    .error {
+      border: 2px solid red;
+    }
+
+    .correct-answer {
+      display: none;
+      color: green;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 18px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    @media (min-width: 768px) {
+      .vocab-row {
+        flex-direction: row;
+        align-items: center;
+      }
+
+      input[type="text"] {
+        width: 48%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-number">Trang 2</div>
+  <h1>Kiểm Tra Từ Vựng</h1>
+  <div id="vocab-check-container"></div>
+  <button id="check-btn">Kiểm Tra</button>
+
+  <script>
+    const vocabList = JSON.parse(localStorage.getItem("vocabList")) || [];
+    const container = document.getElementById("vocab-check-container");
+
+    vocabList.forEach((item, index) => {
+      const box = document.createElement("div");
+      box.className = "vocab-check";
+
+      if (item.prompt && item.prompt.trim() !== "") {
+        const prompt = document.createElement("div");
+        prompt.className = "prompt";
+        prompt.textContent = "Đề bài: " + item.prompt;
+        box.appendChild(prompt);
+      }
+
+      const row = document.createElement("div");
+      row.className = "vocab-row";
+
+      const inputEng = document.createElement("input");
+      inputEng.type = "text";
+      inputEng.placeholder = "Nhập tiếng Anh";
+
+      const inputVie = document.createElement("input");
+      inputVie.type = "text";
+      inputVie.value = item.vietnamese;
+      inputVie.readOnly = true;
+
+      const answer = document.createElement("div");
+      answer.className = "correct-answer";
+      answer.textContent = "Đáp án đúng: " + item.english;
+
+      inputEng.addEventListener("focus", () => {
+        inputEng.classList.remove("error");
+        answer.style.display = "none";
+      });
+
+      row.appendChild(inputEng);
+      row.appendChild(inputVie);
+      box.appendChild(row);
+      box.appendChild(answer);
+      container.appendChild(box);
+    });
+
+    document.getElementById("check-btn").addEventListener("click", () => {
+      const boxes = document.querySelectorAll(".vocab-check");
+      let allCorrect = true;
+
+      boxes.forEach((box, index) => {
+        const inputEng = box.querySelector("input[type='text']:not([readonly])");
+        const answer = box.querySelector(".correct-answer");
+
+        if (inputEng.value.trim().toLowerCase() !== vocabList[index].english.toLowerCase()) {
+          inputEng.classList.add("error");
+          answer.style.display = "block";
+          allCorrect = false;
+        } else {
+          inputEng.classList.remove("error");
+          answer.style.display = "none";
+        }
+      });
+
+      if (allCorrect) {
+        window.location.href = "page3.html";
+      } else {
+        alert("Có từ sai. Bạn sẽ quay lại làm lại từ Trang 2.");
+      }
+    });
+  </script>
+</body>
+</html>

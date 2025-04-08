@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Học Từ Vựng - Trang 5</title>
+  <style>
+    body {
+      background-color: #ffe4e1; /* MistyRose */
+      position: relative;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .page-number {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+    h1 { color: #333; text-align: center; }
+    .vocab-check {
+      border: 1px solid #ccc;
+      background: #fff;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    .vocab-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 5px;
+      align-items: center;
+    }
+    input {
+      padding: 5px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      flex: 1;
+      min-width: 120px;
+    }
+    .error { border: 2px solid red; }
+    .correct-answer {
+      color: green;
+      font-size: 0.9em;
+      margin-left: 10px;
+    }
+    .prompt-display {
+      font-style: italic;
+      color: blue;
+      margin-bottom: 5px;
+    }
+    button {
+      padding: 8px 12px;
+      margin-top: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    @media (max-width:600px) {
+      .vocab-row { flex-direction: column; }
+      input { min-width: unset; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-number">Trang 5</div>
+  <h1>Học Từ Vựng - Trang 5</h1>
+  <div id="vocab-check-container"></div>
+  <button id="check-btn">Kiểm Tra</button>
+  
+  <script>
+    let vocabList = JSON.parse(localStorage.getItem("vocabList")) || [];
+    
+    vocabList.forEach((item, index) => {
+      const container = document.createElement('div');
+      container.className = "vocab-check";
+      
+      if(item.prompt && item.prompt.trim() !== ""){
+         const promptDisplay = document.createElement('div');
+         promptDisplay.className = "prompt-display";
+         promptDisplay.textContent = "Đề bài: " + item.prompt;
+         container.appendChild(promptDisplay);
+      }
+      
+      const rowDiv = document.createElement('div');
+      rowDiv.className = "vocab-row";
+      
+      const inputEnglish = document.createElement('input');
+      inputEnglish.type = "text";
+      inputEnglish.placeholder = "Nhập từ tiếng Anh";
+      
+      const displayVietnamese = document.createElement('input');
+      displayVietnamese.type = "text";
+      displayVietnamese.value = item.vietnamese;
+      displayVietnamese.readOnly = true;
+      
+      rowDiv.appendChild(inputEnglish);
+      rowDiv.appendChild(displayVietnamese);
+      container.appendChild(rowDiv);
+      
+      const correctAnswerSpan = document.createElement('span');
+      correctAnswerSpan.className = "correct-answer";
+      correctAnswerSpan.style.display = "none";
+      correctAnswerSpan.textContent = "Đáp án đúng: " + item.english;
+      container.appendChild(correctAnswerSpan);
+      
+      inputEnglish.addEventListener('focus', function(){
+         correctAnswerSpan.style.display = "none";
+         inputEnglish.classList.remove("error");
+      });
+      
+      document.getElementById("vocab-check-container").appendChild(container);
+    });
+    
+    document.getElementById("check-btn").addEventListener("click", function(){
+      const containers = document.querySelectorAll(".vocab-check");
+      let allCorrect = true;
+      containers.forEach((container, index) => {
+        const inputEnglish = container.querySelector('input[type="text"]:not([readOnly])');
+        const correctAnswerSpan = container.querySelector(".correct-answer");
+        if(inputEnglish.value.trim() !== vocabList[index].english){
+          inputEnglish.classList.add("error");
+          correctAnswerSpan.style.display = "inline";
+          allCorrect = false;
+        } else {
+          inputEnglish.classList.remove("error");
+          correctAnswerSpan.style.display = "none";
+        }
+      });
+      if(allCorrect){
+         window.location.href = "page6.html";
+      } else {
+         alert("Có từ bị nhập sai. Bạn sẽ quay về trang 2 để làm lại.");
+         window.location.href = "page2.html";
+      }
+    });
+  </script>
+</body>
+</html>

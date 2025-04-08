@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Học Từ Vựng - Trang 1</title>
+  <style>
+    /* Nền chuyển động gradient */
+    @keyframes gradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    body {
+      background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+      background-size: 400% 400%;
+      animation: gradient 15s ease infinite;
+      position: relative;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .page-number {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-weight: bold;
+      color: #fff;
+    }
+    h1 {
+      color: #fff;
+      text-align: center;
+    }
+    .name-container {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .vocab-pair {
+      border: 1px solid #ccc;
+      background: rgba(255,255,255,0.9);
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      position: relative;
+    }
+    .vocab-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 5px;
+    }
+    input {
+      padding: 5px;
+      border-radius: 3px;
+      border: 1px solid #ccc;
+      flex: 1;
+      min-width: 120px;
+    }
+    .error {
+      border: 2px solid red;
+    }
+    .prompt-container {
+      margin-bottom: 5px;
+    }
+    .prompt-input {
+      width: 100%;
+      padding: 5px;
+      font-style: italic;
+      color: blue;
+    }
+    .add-prompt-btn {
+      margin-bottom: 5px;
+      cursor: pointer;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: #ff4d4d;
+      color: #fff;
+      border: none;
+      padding: 3px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button {
+      padding: 8px 12px;
+      margin: 5px;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+    }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .vocab-row {
+        flex-direction: column;
+      }
+      input {
+        min-width: unset;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-number">Trang 1</div>
+  <h1>Học Từ Vựng - Trang 1</h1>
+  <div class="name-container">
+    <label for="playerName">Tên người chơi: </label>
+    <input type="text" id="playerName" placeholder="Nhập tên người chơi">
+  </div>
+  <div id="vocab-container">
+    <!-- Các dòng từ vựng sẽ được thêm vào đây -->
+  </div>
+  <div style="text-align:center;">
+    <button id="add-vocab">Tạo Từ Vựng</button>
+    <button id="next-page">Tiếp theo</button>
+  </div>
+
+  <script>
+    let vocabList = [];
+
+    // Hàm kiểm tra cho phép các ký tự: chữ, số, khoảng trắng và các ký tự đặc biệt: :, ,, \", ', ., /, ;, !, ?, -
+    function isValidInput(text) {
+      return /^[A-Za-z0-9\s:,\"'.\/;!?-]+$/.test(text);
+    }
+
+    // Tạo dòng từ vựng mới
+    function createVocabRow(englishValue = "", vietnameseValue = "", promptValue = "") {
+      const container = document.createElement('div');
+      container.className = "vocab-pair";
+
+      // Thêm nút "Xóa" cho dòng này
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = "Xóa";
+      deleteBtn.className = "delete-btn";
+      deleteBtn.addEventListener('click', function(){
+        container.remove();
+      });
+      container.appendChild(deleteBtn);
+
+      // Sự kiện xóa khi nhấn Delete trong bất kỳ input nào của dòng này
+      container.addEventListener('keydown', function(event) {
+        if(event.key === "Delete") {
+          container.remove();
+        }
+      });
+
+      // Prompt container (đề bài)
+      const promptContainer = document.createElement('div');
+      promptContainer.className = "prompt-container";
+      if(promptValue !== ""){
+        const promptInput = document.createElement('input');
+        promptInput.type = "text";
+        promptInput.className = "prompt-input";
+        promptInput.value = promptValue;
+        promptInput.readOnly = true;
+        promptContainer.appendChild(promptInput);
+      }
+      
+      // Nút tạo đề bài
+      const addPromptBtn = document.createElement('button');
+      addPromptBtn.textContent = "Đề bài";
+      addPromptBtn.className = "add-prompt-btn";
+      addPromptBtn.addEventListener('click', function(){
+        const playerName = document.getElementById('playerName').value.trim();
+        if(playerName === ""){
+          alert("Vui lòng nhập tên người chơi trước.");
+          return;
+        }
+        if(promptContainer.children.length === 0){
+          const promptInput = document.createElement('input');
+          promptInput.type = "text";
+          promptInput.placeholder = "Nhập đề bài";
+          promptInput.className = "prompt-input";
+          promptInput.addEventListener('keydown', function(event) {
+            if(event.key === "Delete") {
+              container.remove();
+            }
+          });
+          promptContainer.appendChild(promptInput);
+        }
+      });
+
+      // Row chứa 2 ô: tiếng Anh và tiếng Việt
+      const rowDiv = document.createElement('div');
+      rowDiv.className = "vocab-row";
+      
+      const inputEnglish = document.createElement('input');
+      inputEnglish.type = "text";
+      inputEnglish.placeholder = "Nhập từ tiếng Anh";
+      inputEnglish.value = englishValue;
+      inputEnglish.addEventListener('input', function(){
+        if(inputEnglish.value !== "" && !isValidInput(inputEnglish.value)) {
+          inputEnglish.classList.add("error");
+        } else {
+          inputEnglish.classList.remove("error");
+        }
+      });
+      inputEnglish.addEventListener('keydown', function(event) {
+        if(event.key === "Delete") {
+          container.remove();
+        }
+      });
+
+      const inputVietnamese = document.createElement('input');
+      inputVietnamese.type = "text";
+      inputVietnamese.placeholder = "Nhập từ tiếng Việt";
+      inputVietnamese.value = vietnameseValue;
+      inputVietnamese.addEventListener('keydown', function(event) {
+        if(event.key === "Delete") {
+          container.remove();
+        }
+      });
+
+      rowDiv.appendChild(inputEnglish);
+      rowDiv.appendChild(inputVietnamese);
+
+      container.appendChild(promptContainer);
+      container.appendChild(addPromptBtn);
+      container.appendChild(rowDiv);
+
+      document.getElementById('vocab-container').appendChild(container);
+    }
+
+    document.getElementById('add-vocab').addEventListener('click', function(){
+      const playerName = document.getElementById('playerName').value.trim();
+      if(playerName === ""){
+        alert("Vui lòng nhập tên người chơi trước.");
+        return;
+      }
+      createVocabRow();
+    });
+
+    document.getElementById('next-page').addEventListener('click', function(){
+      const playerName = document.getElementById('playerName').value.trim();
+      if(playerName === ""){
+        alert("Vui lòng nhập tên người chơi trước.");
+        return;
+      }
+      vocabList = [];
+      const pairs = document.querySelectorAll('.vocab-pair');
+      let valid = true;
+      pairs.forEach(pair => {
+        const promptContainer = pair.querySelector('.prompt-container');
+        let promptText = "";
+        if(promptContainer && promptContainer.children.length > 0){
+          promptText = promptContainer.children[0].value.trim();
+        }
+        const rowDiv = pair.querySelector('.vocab-row');
+        const inputEnglish = rowDiv.children[0];
+        const inputVietnamese = rowDiv.children[1];
+
+        if(inputEnglish.value.trim() === "" || !isValidInput(inputEnglish.value.trim())){
+          inputEnglish.classList.add("error");
+          valid = false;
+        }
+        if(inputVietnamese.value.trim() === ""){
+          inputVietnamese.classList.add("error");
+          valid = false;
+        }
+        vocabList.push({
+          prompt: promptText,
+          english: inputEnglish.value.trim(),
+          vietnamese: inputVietnamese.value.trim()
+        });
+      });
+
+      if(!valid || vocabList.length === 0){
+        alert("Vui lòng nhập đầy đủ và hợp lệ cho tất cả các mục.");
+        return;
+      }
+      localStorage.setItem("playerName", playerName);
+      localStorage.setItem("vocabList", JSON.stringify(vocabList));
+      window.location.href = "page2.html";
+    });
+  </script>
+</body>
+</html>
